@@ -44,17 +44,19 @@ class BundleGenerator extends GeneratorForAnnotation<Asset> {
           '@Asset(...) ${variableElement.displayName} has an invalid type');
     }
 
-    var current = type as InterfaceType;
+    var current = type as InterfaceType?;
 
-    for (var ann in current.element.metadata) {
-      var annValue = ann.computeConstantValue();
-      if (annValue != null && typeNameOf(annValue.type!) == 'LoadableAsset') {
-        return LoadableAsset(
-            url: annValue.getField('url')!.toStringValue()!,
-            loader: annValue.getField('loader')!.toStringValue()!);
+    while (current != null) {
+      for (var ann in current.element.metadata) {
+        var annValue = ann.computeConstantValue();
+        if (annValue != null && typeNameOf(annValue.type!) == 'LoadableAsset') {
+          return LoadableAsset(
+              url: annValue.getField('url')!.toStringValue()!,
+              loader: annValue.getField('loader')!.toStringValue()!);
+        }
       }
 
-      current = current.superclass!;
+      current = current.superclass;
     }
 
     error(variableElement,
