@@ -12,11 +12,13 @@ dependencies:
   build: ^2.0.1
   csslib: ^0.17.0
   source_gen: ^1.0.0
-  base85: ^1.0.2
+  base85: ^1.0.3
 
 dev_dependencies:
   pedantic: ^1.9.0
 
 dependency_overrides:
-   aspen:
-     path: ../aspen
+  aspen:
+    path: ../aspen
+  base85:
+    path: ../base85
