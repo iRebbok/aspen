@@ -102,7 +102,7 @@ class BundleGenerator extends GeneratorForAnnotation<Asset> {
     }
 
     var assetId =
-        AssetId.resolve(assetPathReader.stringValue, from: buildStep.inputId);
+        AssetId.resolve(Uri.parse(assetPathReader.stringValue), from: buildStep.inputId);
     if (!await buildStep.canRead(assetId)) {
       error(element, 'Asset ${assetId} cannot be found');
       return Future.value();
