@@ -1,9 +1,8 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:aspen/aspen.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-
-import 'package:aspen/aspen.dart';
 
 import '../loader.dart';
 import 'default_loaders.dart';
@@ -12,7 +11,7 @@ class LoaderException implements Exception {
   final String message;
   final bool ownLine;
 
-  LoaderException(this.message, {this.ownLine});
+  LoaderException(this.message, {required this.ownLine});
   @override
   String toString() => message;
 }
@@ -38,29 +37,28 @@ class BundleGenerator extends GeneratorForAnnotation<Asset> {
     log.severe(spanForElement(element).message(error));
   }
 
-  LoadableAsset getLoadableAsset(VariableElement variableElement) {
-    DartType type = variableElement.computeConstantValue().type;
+  LoadableAsset? getLoadableAsset(VariableElement variableElement) {
+    DartType type = variableElement.computeConstantValue()!.type!;
     if (!(type is InterfaceType)) {
       error(variableElement,
           '@Asset(...) ${variableElement.displayName} has an invalid type');
     }
 
     var current = type as InterfaceType;
-    while (current != null) {
-      for (var ann in current.element.metadata) {
-        var annValue = ann.computeConstantValue();
-        if (annValue != null && typeNameOf(annValue.type) == 'LoadableAsset') {
-          return LoadableAsset(
-              url: annValue.getField('url').toStringValue(),
-              loader: annValue.getField('loader').toStringValue());
-        }
+
+    for (var ann in current.element.metadata) {
+      var annValue = ann.computeConstantValue();
+      if (annValue != null && typeNameOf(annValue.type!) == 'LoadableAsset') {
+        return LoadableAsset(
+            url: annValue.getField('url')!.toStringValue()!,
+            loader: annValue.getField('loader')!.toStringValue()!);
       }
 
-      current = current.superclass;
+      current = current.superclass!;
     }
 
     error(variableElement,
-        'Asset type ${type.displayName} has no @LoadableAsset annotation');
+        'Asset type ${type.getDisplayString} has no @LoadableAsset annotation');
     return null;
   }
 
@@ -72,15 +70,14 @@ class BundleGenerator extends GeneratorForAnnotation<Asset> {
       return Future.value();
     }
 
-    var variableElement = element as VariableElement;
-    var value = variableElement.computeConstantValue();
+    var value = element.computeConstantValue();
     if (value == null) {
       error(element,
           '@Asset(...) ${element.displayName} must have a constant value');
       return Future.value();
     }
 
-    var loadableAsset = getLoadableAsset(variableElement);
+    var loadableAsset = getLoadableAsset(element);
     if (loadableAsset == null) {
       return Future.value();
     }
@@ -101,21 +98,21 @@ class BundleGenerator extends GeneratorForAnnotation<Asset> {
       assetPathReader = annotation.read('path');
     }
 
-    var assetId =
-        AssetId.resolve(Uri.parse(assetPathReader.stringValue), from: buildStep.inputId);
+    var assetId = AssetId.resolve(Uri.parse(assetPathReader.stringValue),
+        from: buildStep.inputId);
     if (!await buildStep.canRead(assetId)) {
-      error(element, 'Asset ${assetId} cannot be found');
+      error(element, 'Asset $assetId cannot be found');
       return Future.value();
     }
 
-    String content;
+    String? content;
 
     try {
-      content = await loader()
+      content = await loader!()
           .load(LoaderContextImpl(buildStep), assetId, ConstantReader(value));
     } on LoaderException catch (ex) {
       if (ex.ownLine) {
-        error(element, '${loadableAsset} failed');
+        error(element, '$loadableAsset failed');
         log.severe(ex.message);
       } else {
         error(element, '${loadableAsset.loader} failed with: ${ex.message}');
@@ -125,6 +122,6 @@ class BundleGenerator extends GeneratorForAnnotation<Asset> {
     }
 
     return Future.value(
-        "const String _${variableElement.name}\$content = r'''${content}''';");
+        "const String _${element.name}\$content = r'''$content''';");
   }
 }

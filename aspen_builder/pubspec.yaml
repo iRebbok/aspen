@@ -4,7 +4,7 @@ description: A modern, easy-to-use asset packer (builder package)
 homepage: https://github.com/refi64/aspen
 
 environment:
-  sdk: '>=2.8.0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   analyzer: ^1.5.0

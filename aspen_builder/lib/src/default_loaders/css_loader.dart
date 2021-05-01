@@ -36,7 +36,7 @@ class _UrlEmbedVisitor extends Visitor {
     try {
       uri = Uri.parse(node.value);
     } on FormatException {
-      ctx.error(node.span.message('invalid URI'), ownLine: true);
+      ctx.error(node.span!.message('invalid URI'), ownLine: true);
       return Future.value();
     }
 
@@ -46,7 +46,7 @@ class _UrlEmbedVisitor extends Visitor {
 
     var target = AssetId.resolve(node.value, from: asset);
     if (!await ctx.buildStep.canRead(target)) {
-      ctx.error(node.span.message('target of URI does not exist'),
+      ctx.error(node.span!.message('target of URI does not exist'),
           ownLine: true);
       return Future.value();
     }
@@ -76,7 +76,7 @@ class CssLoader extends TextLoader {
       inlineOnly = inlineOption
           .read('inlineOnly')
           .listValue
-          .map((x) => x.toStringValue())
+          .map((x) => x.toStringValue()!)
           .toList();
     }
 
