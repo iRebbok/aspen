@@ -7,16 +7,16 @@ environment:
   sdk: '>=2.8.0 <3.0.0'
 
 dependencies:
-  analyzer: '>=0.37.0 <0.40.0'
-  aspen: ^0.3.0
-  build: ^1.2.0
-  csslib: ^0.16.1
-  source_gen: ^0.9.4+3
-  z85: ^0.1.0
+  analyzer: ^1.5.0
+  aspen: ^0.4.0
+  build: ^2.0.1
+  csslib: ^0.17.0
+  source_gen: ^1.0.0
+  base85: ^1.0.2
 
 dev_dependencies:
   pedantic: ^1.9.0
 
-# dependency_overrides:
-#   aspen:
-#     path: ../aspen
+dependency_overrides:
+   aspen:
+     path: ../aspen

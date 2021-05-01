@@ -1,11 +1,13 @@
 import 'dart:convert' as convert;
 
 import 'package:aspen/aspen.dart';
-import 'package:z85/z85.dart';
+import 'package:base85/base85.dart';
+
+final _z85Codec = Base85Codec(Alphabets.z85);
 
 /// An asset containing plain text.
 @LoadableAsset(
-    url: 'package:aspen_generator/src/default_loaders.dart',
+    url: 'package:aspen_builder/src/default_loaders.dart',
     loader: 'TextLoader')
 class TextAsset {
   final String text;
@@ -19,7 +21,7 @@ class TextAsset {
 ///
 /// The decoded data can be accessed via [decode()].
 @LoadableAsset(
-    url: 'package:aspen_generator/src/default_loaders.dart',
+    url: 'package:aspen_builder/src/default_loaders.dart',
     loader: 'BinaryLoader')
 class BinaryAsset {
   /// The z85-encoded data as a string.
@@ -29,7 +31,7 @@ class BinaryAsset {
 
   /// Return an iterable of the decoded binary data.
   Iterable<int> decode() {
-    var decoded = z85.decode(encoded);
+    var decoded = _z85Codec.decode(encoded);
     var padding = decoded.last;
     return decoded.getRange(0, decoded.length - padding);
   }

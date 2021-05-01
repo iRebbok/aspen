@@ -1,5 +1,5 @@
 name: aspen_assets
-version: 0.3.0
+version: 0.4.0
 description: A modern, easy-to-use asset packer (assets package)
 homepage: https://github.com/refi64/aspen
 
@@ -7,8 +7,8 @@ environment:
   sdk: ">=2.8.0 <3.0.0"
 
 dependencies:
-  aspen: ^0.3.0
-  z85: ^0.1.0
+  aspen: ^0.4.0
+  base85: ^1.0.2
 
 dependency_overrides:
   aspen:
