@@ -21,4 +21,6 @@ dependency_overrides:
   aspen:
     path: ../aspen
   base85:
-    path: ../base85
+    git:
+      url: git@github.com:iRebbok/base85.git
+      ref: null-safety
